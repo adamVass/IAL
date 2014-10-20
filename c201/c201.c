@@ -96,15 +96,15 @@ void InsertFirst (tList *L, int val) {
 **/
 	tElemPtr newFirst = NULL;
 	
-    if ((newFirst = malloc(sizeof(struct tElem))) == NULL)
+    if ((newFirst = malloc(sizeof(struct tElem))) == NULL)		/* Ak alokácia zlyhá volá Error() a konèí */
     {
 		Error();
 		return;
 	}
 	
-	newFirst->data = val;
-	newFirst->ptr = L->First;
-	L->First = newFirst;
+	newFirst->data = val;			/* Do dátovej zlo¾ky nového prvku vlo¾í obsah val */
+	newFirst->ptr = L->First;		/* Nový prvý prvok zoznamu bude ukazova» na pôvodný prvý prvok zoznamu */
+	L->First = newFirst;			/* Nový prvok zoznamu bude nastavený ako zaèiatoèný */
 }
 
 void First (tList *L) {
@@ -124,9 +124,9 @@ void CopyFirst (tList *L, int *val) {
 	if (L->First != NULL)
 	{
 		*val = L->First->data;
-		return;
+		return;					/* Ak zoznam nie je prázdny ulo¾í dáta na adresu kam ukazuje *val */
 	}
-	Error();
+	Error();					/* Ak je prázdny, volá Error() */
 }
 
 void DeleteFirst (tList *L) {
@@ -137,11 +137,11 @@ void DeleteFirst (tList *L) {
 **/
 	if (L->First != NULL)
 	{
-		tElemPtr temp = L->First;
+		tElemPtr temp = L->First;		/* Do pomocnej premennej ukladá adresu prvého prvku zoznamu */
 		if (L->Act == L->First)
-			L->Act = NULL;
-		L->First = L->First->ptr;
-		free(temp);
+			L->Act = NULL;				/* Ak je prvý prvok zároveò aktívny, aktivita sa stráca */
+		L->First = L->First->ptr;		/* Prvým prvkom sa stáva nasledujúci prvok */
+		free(temp);						/* Pôvodný prvý prvok zaniká, pamä» je vrátená OS */
 	}
 }	
 
@@ -187,10 +187,10 @@ void Copy (tList *L, int *val) {
 **/
 	if (L->Act != NULL)
 	{
-		*val = L->Act->data;
+		*val = L->Act->data;		/* Ak je zoznam aktívny ulo¾í dáta aktívneho prvku na adresu kam ukazuje *val */
 		return;
 	}
-	Error();
+	Error();						/* Ak zoznam aktívny nie je, volá funkciu Error() */
 }
 
 void Actualize (tList *L, int val) {
