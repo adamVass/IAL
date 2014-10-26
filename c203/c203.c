@@ -92,7 +92,7 @@ int nextIndex (int index) {
 ** Funkci implementujte jako jediný prikaz vyu¾ívající operace '%'.
 ** Funkci nextIndex budete vyu¾ívat v dal¹ích implementovaných funkcích.
 */
-	return ((index + 1) % QUEUE_SIZE);
+	return ((index + 1) % QUEUE_SIZE);	/* Ak by index presiahol QUEUE_SIZE vráti sa index zaèiatoèného prvku */
 }
 
 int queueEmpty (const tQueue* q) {
@@ -100,7 +100,7 @@ int queueEmpty (const tQueue* q) {
 ** Vrací nenulovou hodnotu, pokud je frona prázdná, jinak vrací hodnotu 0. 
 ** Funkci implementujte jako jediný pøíkaz.
 */
-	return q->f_index == q->b_index;
+	return q->f_index == q->b_index;	/* Ak ukazujú oba indexy na rovnaký prvok fronta je prázdna a vracia 1. Inak - ak fronta prázdna nie je - 0 */
 }
 
 int queueFull (const tQueue* q) {
@@ -108,7 +108,7 @@ int queueFull (const tQueue* q) {
 ** Vrací nenulovou hodnotu, je-li fronra plná, jinak vrací hodnotu 0. 
 ** Funkci implementujte jako jediný pøíkaz s vyu¾itím pomocné funkce nextIndex.
 */
-	return nextIndex(q->b_index) == q->f_index;
+	return nextIndex(q->b_index) == q->f_index; /* Ak je index za b_index zhodný s f_index, fronta je plná - vracia 1. Inak 0 */
 }
 
 void queueFront (const tQueue* q, char* c) {
@@ -127,7 +127,7 @@ void queueFront (const tQueue* q, char* c) {
 		queueError(QERR_FRONT);
 		return;
 	}
-	*c = q->arr[q->f_index];
+	*c = q->arr[q->f_index];	/* Na adresu kam ukazuje pointer c ulo¾í prvý prvok fronty */
 }
 
 void queueRemove (tQueue* q) {
@@ -142,7 +142,7 @@ void queueRemove (tQueue* q) {
 		queueError(QERR_REMOVE);
 		return;
 	}
-	q->f_index = nextIndex(q->f_index);
+	q->f_index = nextIndex(q->f_index);		/* Indexom prvého prvku sa stáva prvok za aktuálnym f_index */
 }
 
 void queueGet (tQueue* q, char* c) {
@@ -158,8 +158,8 @@ void queueGet (tQueue* q, char* c) {
 		queueError(QERR_GET);
 		return;
 	}
-	queueFront(q, c);
-	queueRemove(q);
+	queueFront(q, c);	/* c bude ukazova» na prvý znak fronty */
+	queueRemove(q);		/* Index prvého prvku sa posunie na nasledujúci */
 }
 
 void queueUp (tQueue* q, char c) {
@@ -177,7 +177,7 @@ void queueUp (tQueue* q, char c) {
 		queueError(QERR_UP);
 		return;
 	}
-	q->arr[q->b_index] = c;
-	q->b_index = nextIndex(q->b_index);
+	q->arr[q->b_index] = c;		/* Vlo¾í znak c na prvú voµnú pozíciu vo fronte */
+	q->b_index = nextIndex(q->b_index);		/* Nastaví b_index na ïal¹iu voµnú pozíciu vo fronte */
 }
 /* Konec pøíkladu c203.c */
