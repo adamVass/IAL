@@ -90,7 +90,7 @@ void DLDisposeList (tDLList *L) {
 	
 	while(L->Act != NULL)
 	{
-		L->First = L->Act->rptr;		/* Nastaví nasledujúci prvok ako prvý */
+		L->First = L->Act->rptr;	/* Nastaví nasledujúci prvok ako prvý */
 		free(L->Act);				/* Uvoµní aktívny prvok */
 		L->Act = L->First;			/* Nastaví ïal¹í (po novom prvý) prvok ako aktuálny */
 	}
@@ -107,16 +107,16 @@ void DLInsertFirst (tDLList *L, int val) {
 	tDLElemPtr newFirst = NULL;
 	
 	if ((newFirst = malloc(sizeof(struct tDLElem))) == NULL)
-	{
+	{ /* Alokuje pamä» pre nový prvok, v prípade zlyhania volá DLError() a vracia riadenie volajúcej funkcii */
 		DLError();
 		return;
 	}
 	
 	newFirst->data = val;
 	newFirst->lptr = NULL;
-	newFirst->rptr = L->First;
+	newFirst->rptr = L->First;		/* Pointer na nasledujúci prvok nastaví na prvý prvok v zozname */
 	if (L->First == NULL)
-		L->Last = newFirst;
+		L->Last = newFirst;			/* Ak je zoznam prázdny nový prvý prvok bude zároveò posledný */
 	else
 		L->First->lptr = newFirst;
 		
@@ -141,7 +141,7 @@ void DLInsertLast(tDLList *L, int val) {
 	newLast->lptr = L->Last;
 	newLast->rptr = NULL;
 	if (L->First == NULL)
-		L->First = newLast;
+		L->First = newLast;			/* Ak je zoznam prázdny nový posledný prvok bude zároveò prvý */
 	else
 		L->Last->rptr = newLast;
 	
@@ -202,14 +202,14 @@ void DLDeleteFirst (tDLList *L) {
 		tDLElemPtr temp = L->First;		/* Do pomocnej premennej ukladá adresu prvého prvku zoznamu */
 		if (L->Act == L->First)
 			L->Act = NULL;				/* Ak je prvý prvok zároveò aktívny, aktivita sa stráca */
-		if (L->First == L->Last)
+		if (L->First == L->Last)		/* Ak má zoznam jediný prvok je potrebné zru¹i» pointer na prvý aj posledný prvok (identické) */
 		{
 			L->First = NULL;
 			L->Last = NULL;
 		}
 		else
 		{
-			L->First = L->First->rptr;		/* Prvým prvkom sa stáva nasledujúci prvok */
+			L->First = L->First->rptr;	/* Prvým prvkom sa stáva nasledujúci prvok */
 			L->First->lptr = NULL;
 		}	
 		free(temp);						/* Pôvodný prvý prvok zaniká, pamä» je vrátená OS */
@@ -223,17 +223,17 @@ void DLDeleteLast (tDLList *L) {
 **/ 
 	if (L->First != NULL)
 	{
-		tDLElemPtr temp = L->Last;		/* Do pomocnej premennej ukladá adresu prvého prvku zoznamu */
+		tDLElemPtr temp = L->Last;		/* Do pomocnej premennej ukladá adresu posledného prvku zoznamu */
 		if (L->Act == L->Last)
 			L->Act = NULL;				/* Ak je prvý prvok zároveò aktívny, aktivita sa stráca */
-		if (L->First == L->Last)
+		if (L->First == L->Last)		/* Ak má zoznam jediný prvok je potrebné zru¹i» pointer na prvý aj posledný prvok (identické) */
 		{
 			L->First = NULL;
 			L->Last = NULL;
 		}
 		else
 		{
-			L->Last = L->Last->lptr;		/* Prvým prvkom sa stáva nasledujúci prvok */
+			L->Last = L->Last->lptr;	/* Posledným prvkom sa stáva predchádzajúci prvok */
 			L->Last->rptr = NULL;
 		}	
 		free(temp);						/* Pôvodný prvý prvok zaniká, pamä» je vrátená OS */
@@ -248,12 +248,12 @@ void DLPostDelete (tDLList *L) {
 **/
 	if ((L->Act != NULL) && (L->Act != L->Last))
 	{
-		tDLElemPtr temp = L->Act->rptr;		/* Do pomocnej premennej vlo¾í prvok zoznamu za akt. prvkom */
-		L->Act->rptr = temp->rptr;			/* Ako nasledujúci prvok nastaví prvok za tým, kt. bude vymazaný */
-		if (temp == L->Last)
+		tDLElemPtr temp = L->Act->rptr;	/* Do pomocnej premennej vlo¾í prvok zoznamu za akt. prvkom */
+		L->Act->rptr = temp->rptr;		/* Ako nasledujúci prvok nastaví prvok za tým, kt. bude vymazaný */
+		if (temp == L->Last)			/* Ak je vymazávaný prvok zároveò posledný, posledným sa stáva prvok aktívny, teda prvok pred ním */
 			L->Last = L->Act;
 		else
-			temp->rptr->lptr = L->Act;
+			temp->rptr->lptr = L->Act;	/* Inak prepojí prvok za vamazávaným s prvkom aktívnym (teda vynechá vymazávaný prvok)
 		
 		free(temp);
 	}
@@ -267,9 +267,9 @@ void DLPreDelete (tDLList *L) {
 **/
 	if ((L->Act != NULL) && (L->Act != L->First))
 	{
-		tDLElemPtr temp = L->Act->lptr;		/* Do pomocnej premennej vlo¾í prvok zoznamu za akt. prvkom */
-		L->Act->lptr = temp->lptr;			/* Ako nasledujúci prvok nastaví prvok za tým, kt. bude vymazaný */
-		if (temp == L->First)
+		tDLElemPtr temp = L->Act->lptr;		/* Do pomocnej premennej vlo¾í prvok zoznamu pred akt. prvkom */
+		L->Act->lptr = temp->lptr;			/* Ako predcházajúci prvok nastaví prvok pred tým, kt. bude vymazaný */
+		if (temp == L->First)				/* Rovnaký princíp ako vo funkcii DLPostDelete */
 			L->First = L->Act;
 		else
 			temp->lptr->rptr = L->Act;
@@ -296,8 +296,8 @@ void DLPostInsert (tDLList *L, int val) {
 	}
 	
 	newPostInsert->data = val;
-	newPostInsert->lptr = L->Act;
-	newPostInsert->rptr = L->Act->rptr;
+	newPostInsert->lptr = L->Act;						/* Aktívny prvok sa stáva predchádzajúcim prvku newPostInsert */
+	newPostInsert->rptr = L->Act->rptr;					/* Nasledujúci prvok ostáva, teda sa prevezme z L->Act->rptr */
 	L->Act->rptr = newPostInsert;
 	if (L->Act == L->Last)
 		L->Last = newPostInsert;
@@ -392,7 +392,7 @@ int DLActive (tDLList *L) {
 ** Je-li seznam aktivní, vrací true. V opaèném pøípadì vrací false.
 ** Funkci implementujte jako jediný pøíkaz.
 **/
-	return L->Act != NULL;
+	return L->Act != NULL;		/* Vracia TRUE (1) ak L->Act ukazuje na prvok, FALSE (0) ak nadobúda hodnotu NULL */
 }
 
 /* Konec c206.c*/
