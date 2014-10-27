@@ -253,7 +253,7 @@ void DLPostDelete (tDLList *L) {
 		if (temp == L->Last)			/* Ak je vymazávaný prvok zároveò posledný, posledným sa stáva prvok aktívny, teda prvok pred ním */
 			L->Last = L->Act;
 		else
-			temp->rptr->lptr = L->Act;	/* Inak prepojí prvok za vamazávaným s prvkom aktívnym (teda vynechá vymazávaný prvok)
+			temp->rptr->lptr = L->Act;	/* Inak prepojí prvok za vamazávaným s prvkom aktívnym (teda vynechá vymazávaný prvok) */
 		
 		free(temp);
 	}
